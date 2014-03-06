@@ -1,0 +1,33 @@
+{
+  "manifest_version": 2,
+
+  "name": "SaveToBaidu",
+  "description": "This extension demonstrates a browser action with kittens.",
+  "version": "1.0",
+
+  "permissions": [
+    "http://wappass.baidu.com/",
+    "http://yun.baidu.com/",
+    "http://pan.baidu.com/",
+    "contextMenus",
+    "cookies",
+    "tabs",
+    "storage",
+    "notifications"
+  ],
+
+  // "browser_action": {
+  //   "default_icon": "icon.png",
+  //   "default_popup": "baiduLogin.html"
+  // },
+
+  "background": {
+    "scripts": ["js/menus.js"]
+  },
+
+  "icons": {
+    "16": "img/icon.png",
+    "48": "img/icon.png",
+    "128": "img/icon.png"
+  }
+} 

@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>请输入验证码</title>
+    <meta charset>
+    <link href="css/vcode.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/button.css">
+    <style>
+    /*  body {
+        min-width: 357px;
+        overflow-x: hidden;
+      }
+
+      img {
+        margin: 5px;
+        border: 2px solid black;
+        vertical-align: middle;
+        width: 75px;
+        height: 75px;
+      }*/
+    </style>
+
+    <!--
+      - JavaScript and HTML must be in separate files: see our Content Security
+      - Policy documentation[1] for details and explanation.
+      -
+      - [1]: http://developer.chrome.com/extensions/contentSecurityPolicy.html
+     -->
+    <script src="js/vcode.js"></script>
+  </head>
+  <body>
+    <div class="input-code-row">
+      <input type="text" style="padding: 3px;width: 85px;height: 23px;border: 1px solid #C6C6C6;background-color: white;vertical-align: middle;" id="input-code" maxlength="4">
+      <a href="javascript:;" style="text-decoration: underline;" id="change-img-code-btn"><img id="img-code" style="margin-left: 10px;vertical-align: middle;border:2px solid black;" alt="验证码获取中" src=""></a>
+      <!-- <div style="padding-left: 84px;height: 18px;color: #d80000; margin:0px 0px; id="verify-error" ></div> -->
+      <a id="ok-btn" href="#" class="button button-pill button-flat-primary">确定</a>
+    </div>
+    
+  </body>
+</html>
