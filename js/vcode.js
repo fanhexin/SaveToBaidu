@@ -14,7 +14,12 @@ document.addEventListener('DOMContentLoaded', function () {
 		chrome.windows.remove(id);
 	}
 
-	function spin() {
+	function spinStart() {
+		spinShape.style.display = "block";
+		if (spinner) {
+			spinner.spin(d.body);
+			return;
+		}
 		var opts = {
 			lines: 13, // The number of lines to draw
 			length: 8, // The length of each line
@@ -33,8 +38,14 @@ document.addEventListener('DOMContentLoaded', function () {
 			top: 'auto', // Top position relative to parent in px
 			left: 'auto' // Left position relative to parent in px
 		};
-		spinShape.style.display = "block";
 		spinner = new Spinner(opts).spin(d.body);
+	}
+
+	function spinStop() {
+		spinShape.style.display = "none";
+		if (spinner) {
+			spinner.stop();
+		}
 	}
 
 	changeImgCodeBtn.onclick = function() {
@@ -43,8 +54,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	};
 
 	okBtn.onclick = function() {
-		spin();
-		return;
 		var code = d.getElementById("input-code");
 		if (!code.value) {
 			code.focus();
@@ -59,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			vcode: vcode,
 			input: code.value
 		});
+		spinStart();
 	};
 
 	chrome.runtime.onMessage.addListener(function(msg, sender) {
@@ -70,6 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				imgCode.src = msg.img;
 				break;
 			case "error":
+				spinStop();
 				vcode = msg.vcode;
 				imgUrl = msg.img;
 				imgCode.src = msg.img;
