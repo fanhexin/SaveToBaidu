@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
 
-  "name": "SaveToBaidu",
-  "description": "This extension demonstrates a browser action with kittens.",
+  "name": "百度云网盘离线下载",
+  "description": "将图片链接、下载链接(http/https/ftp/电驴/磁力链协议)添加到百度云网盘离线下载。",
   "version": "1.0",
 
   "permissions": [

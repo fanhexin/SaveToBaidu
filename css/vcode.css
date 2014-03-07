@@ -1,11 +1,47 @@
-/*.input-code-row {
-	padding: 10px;
-}*/
+#verify-error {
+	color: #d80000;
+	margin: 0px auto;
+	text-align: center;
+}
 
 body {
-	margin: 10px;
+	margin: 0px;
+    overflow-x: hidden;
 }
 
 div {
 	display: block;
+	margin: 5px auto;
+	width: 209px;
+}
+
+input {
+	padding: 3px;
+	width: 85px;
+	height: 23px;
+	border: 1px solid #C6C6C6;
+	background-color: white;
+	vertical-align: middle;
+}
+
+#img-code {
+	margin-left: 10px;
+	vertical-align: middle;
+	border:1px solid black;
+}
+
+#ok-btn {
+	width: 158px;
+}
+
+.spin-shape {
+	position: absolute;
+	width: 230px;
+	height: 100px;
+	left: 0px;
+	top: 0px;
+	margin: 0px;
+	display: none;
+	background-color: #000000;
+	opacity: 0.3;
 }

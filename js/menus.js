@@ -16,6 +16,30 @@
 		save_path: "/"
 	};
 	var resUrl = null;
+	var VCODE_WIN_WIDTH = 230;
+	var VCODE_WIN_HEIGHT = 100;
+	var supportProtocols = [
+		"http",
+		"https",
+		"ftp",
+		"ed2k",
+		"magnet"
+	];
+
+	function _isSupportProtocol(url) {
+		var reg = /^([^:]*):.*/g;
+		var ret = reg.exec(url);
+		if (!ret) {
+			return false;
+		}
+		var protocol = ret[1];
+		for (var i = 0; i < supportProtocols.length; i++) {
+			if (protocol == supportProtocols[i]) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	function _makeForm(data) {
 		var form = "";
@@ -41,7 +65,7 @@
 		xhr.open("POST", url, true);
 		xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 		xhr.onreadystatechange=function() {
-		  	if (xhr.readyState==4/* && xhr.status==200*/) {
+		  	if (xhr.readyState == 4) {
 		    	callback(xhr.responseText);
 		    }
 		};
@@ -86,33 +110,40 @@
 	}
 
 	function onCbSaveToBaidu(retJson) {
-		if (retJson.error_code == -19) {
-			if (vcodeTabId) {
-				send(vcodeTabId, {
-					cmd: "error",
-					vcode: retJson.vcode,
-	        		img: retJson.img
-				});
+		if (retJson.error_code) {
+			if (retJson.error_code == -19) {
+				if (vcodeTabId) {
+					send(vcodeTabId, {
+						cmd: "error",
+						vcode: retJson.vcode,
+		        		img: retJson.img
+					});
+					return;
+				}
+
+				chrome.windows.create({
+		            url: chrome.extension.getURL("vcode.html"),
+		            type: "popup",
+		            width: VCODE_WIN_WIDTH,
+		            height: VCODE_WIN_HEIGHT,
+		            top: (window.screen.availHeight - VCODE_WIN_HEIGHT)/2,
+		            left: (window.screen.availWidth - VCODE_WIN_WIDTH)/2,
+		        }, function(w) {
+		        	vcodeTabId = w.tabs[0].id;
+		        	send(vcodeTabId, {
+		        		cmd:"init",
+		        		id: w.id,
+		        		vcode: retJson.vcode,
+		        		img: retJson.img
+		        	});
+		        });
+			} else {
+				alert("发生错误!");
 				return;
 			}
-
-			chrome.windows.create({
-	            url: chrome.extension.getURL("vcode.html"),
-	            type: "popup",
-	            width: 230,
-	            height: 100
-	        }, function(w) {
-	        	vcodeTabId = w.tabs[0].id;
-	        	send(vcodeTabId, {
-	        		cmd:"init",
-	        		id: w.id,
-	        		vcode: retJson.vcode,
-	        		img: retJson.img
-	        	});
-	        });
 		}
-
-		if (retJson.task_id && retJson.rapid_download) {
+		
+		if (retJson.task_id) {
 			if (vcodeTabId)
 				send(vcodeTabId, {cmd:"close"});
 			var notify = chrome.notifications;
@@ -121,7 +152,7 @@
 					type: "basic",
 			        title: "提示",
 			        message: "已成功添加到百度云盘离线下载列表中",
-			        iconUrl: "icon.png"
+			        iconUrl: "img/icon.png"
 				}, function() {});
 				return;
 			}
@@ -129,20 +160,19 @@
 		}
 	}
 
-	// function onCookieChange() {
-
-	// }
-
 	function onMenuItemClick(info, tab) {
 		if (info.mediaType == "image") {
 			resUrl = info.srcUrl;
 		} else {
 			resUrl = info.linkUrl;
+			if (!_isSupportProtocol(resUrl)) {
+				return alert("目前百度网盘离线下载仅支持http/https/ftp/电驴/磁力链协议!");
+			}
 		}
 
 		chrome.cookies.get({url:BAIDUYUN_URL, name:"BDUSS"}, function(cookie) {
 			if (!cookie) {
-				bdstoken = "";
+				setBdstoken(null);
 				chrome.tabs.create({url:BAIDUYUN_URL});
 				return;
 			}
@@ -162,7 +192,7 @@
 	for (var i = 0; i < context.length; i++) {
 		var item = context[i];
 		chrome.contextMenus.create({
-			"title": "将" + item.name + "保存到百度网盘", 
+			"title": "将" + item.name + "添加到百度云网盘离线下载", 
 			"contexts":[item.type], 
 			"onclick": onMenuItemClick
 		});
