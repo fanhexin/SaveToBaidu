@@ -16,8 +16,10 @@
 		save_path: "/"
 	};
 	var resUrl = null;
-	var VCODE_WIN_WIDTH = 230;
-	var VCODE_WIN_HEIGHT = 100;
+	var VCODE_MAC_WIDTH = 230;
+	var VCODE_MAC_HEIGHT = 100;
+	var VCODE_WIN_WIDTH = 246;
+	var VCODE_WIN_HEIGHT = 138;
 	var supportProtocols = [
 		"http",
 		"https",
@@ -25,6 +27,9 @@
 		"ed2k",
 		"magnet"
 	];
+	var winId = null;
+	var vcode = null;
+	var img = null;
 
 	function _isSupportProtocol(url) {
 		var reg = /^([^:]*):.*/g;
@@ -121,22 +126,26 @@
 					return;
 				}
 
-				chrome.windows.create({
-		            url: chrome.extension.getURL("vcode.html"),
-		            type: "popup",
-		            width: VCODE_WIN_WIDTH,
-		            height: VCODE_WIN_HEIGHT,
-		            top: (window.screen.availHeight - VCODE_WIN_HEIGHT)/2,
-		            left: (window.screen.availWidth - VCODE_WIN_WIDTH)/2,
-		        }, function(w) {
-		        	vcodeTabId = w.tabs[0].id;
-		        	send(vcodeTabId, {
-		        		cmd:"init",
-		        		id: w.id,
-		        		vcode: retJson.vcode,
-		        		img: retJson.img
-		        	});
-		        });
+				//因为各平台窗口边框宽度不同，设置窗口不同宽高
+				chrome.runtime.getPlatformInfo(function(platformInfo) {
+					var width = (platformInfo.os == "win")?VCODE_WIN_WIDTH:VCODE_MAC_WIDTH;
+					var height = (platformInfo.os == "win")?VCODE_WIN_HEIGHT:VCODE_MAC_HEIGHT;
+
+					chrome.windows.create({
+			            url: chrome.extension.getURL("vcode.html"),
+			            type: "popup",
+			            width: width,
+			            height: height,
+			            top: (window.screen.availHeight - height)/2,
+			            left: (window.screen.availWidth - width)/2
+			        }, function(w) {
+			        	winId = w.id;
+			        	vcodeTabId = w.tabs[0].id;
+			        	vcode = retJson.vcode;
+			        	img = retJson.img;
+			        	
+			        });
+				});
 			} else {
 				alert("发生错误!");
 				return;
@@ -199,12 +208,26 @@
 	}
 
 	chrome.runtime.onMessage.addListener(function(msg, sender) {
-		saveToBaiduPan({
-			url:resUrl,
-			token:bdstoken,
-			vcode:msg.vcode,
-			input:msg.input
-		}, onCbSaveToBaidu);
+		switch (msg.cmd) {
+			case "finish":
+				send(vcodeTabId, {
+	        		cmd:"init",
+	        		id: winId,
+	        		vcode: vcode,
+	        		img: img
+	        	});
+				break;
+			case "post":
+				saveToBaiduPan({
+					url:resUrl,
+					token:bdstoken,
+					vcode:msg.vcode,
+					input:msg.input
+				}, onCbSaveToBaidu);
+				break;
+			default:
+				break;
+		}
 	});
 
 	chrome.windows.onRemoved.addListener(function() {

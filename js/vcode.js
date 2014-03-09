@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 
 		chrome.runtime.sendMessage(chrome.runtime.id, {
+			cmd: "post",
 			vcode: vcode,
 			input: code.value
 		});
@@ -92,6 +93,9 @@ document.addEventListener('DOMContentLoaded', function () {
 			default:
 				break;
 		}		
+	});
+	chrome.runtime.sendMessage(chrome.runtime.id, {
+		cmd: "finish"
 	});
 });
 

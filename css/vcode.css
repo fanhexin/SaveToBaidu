@@ -22,6 +22,7 @@ input {
 	border: 1px solid #C6C6C6;
 	background-color: white;
 	vertical-align: middle;
+	float: left;
 }
 
 #img-code {
