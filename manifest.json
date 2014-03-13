@@ -3,7 +3,7 @@
 
   "name": "百度云网盘离线下载",
   "description": "将图片链接、下载链接(http/https/ftp/电驴/磁力链协议)添加到百度云网盘离线下载。",
-  "version": "1.0",
+  "version": "1.1",
 
   "permissions": [
     "http://wappass.baidu.com/",
@@ -16,11 +16,6 @@
     "storage",
     "notifications"
   ],
-
-  // "browser_action": {
-  //   "default_icon": "icon.png",s
-  //   "default_popup": "baiduLogin.html"
-  // },
 
   "background": {
     "scripts": ["js/menus.js"]
