@@ -1,6 +1,6 @@
 (function() {
 	var BAIDUYUN_URL = "http://yun.baidu.com/";
-	var BAIDUPAN_SAVE_URL = "http://pan.baidu.com/rest/2.0/services/cloud_dl?channel=chunlei&clienttype=0&web=1";
+	var BAIDUPAN_SAVE_URL = "http://yun.baidu.com/rest/2.0/services/cloud_dl?channel=chunlei&clienttype=0&web=1";
 	var DB = chrome.storage.local;
 	var send = chrome.tabs.sendMessage;
 	var bdstoken = null;
@@ -84,7 +84,7 @@
 
 	function _getBdstokenFromPage(callback) {
 		_ajaxGet(BAIDUYUN_URL, function(responseText) {
-			var reg = /bdstoken=\"([^\"]*)\"/g;
+			var reg = /\"bdstoken\":\"([^\"]*)\"/g;
 			var token = reg.exec(responseText)[1];
 			setBdstoken(token);
 			callback(token);
@@ -95,6 +95,7 @@
 		if (bdstoken) {
 			return callback(bdstoken);
 		}
+
 		DB.get("bdstoken", function(item) {
 			if (item.bdstoken) {
 				bdstoken = item.bdstoken;
